@@ -1,0 +1,82 @@
+.dashboardContainer {
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    max-width: 800px;
+}
+
+h2,
+h3 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.bidItem,
+.allotmentItem {
+    background-color: #fff;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.bidForm {
+    background-color: #fff;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    display: grid;
+    gap: 15px;
+    grid-template-columns: auto auto;
+    align-items: center;
+}
+
+.bidForm > div {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.bidForm label {
+    text-align: right;
+}
+
+.bidForm input[type="number"],
+.bidForm select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 150px;
+}
+
+.bidForm button {
+    grid-column: 1 / span 2;
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.bidForm button:hover {
+    background-color: #1e7e34;
+}
+
+@media (max-width: 600px) {
+    .bidForm {
+        grid-template-columns: auto;
+    }
+
+    .bidForm label {
+        text-align: left;
+    }
+
+    .bidForm button {
+        grid-column: 1;
+    }
+}

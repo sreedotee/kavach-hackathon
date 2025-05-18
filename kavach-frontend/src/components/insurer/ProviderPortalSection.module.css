@@ -1,0 +1,29 @@
+.provider {
+  padding: 20px 0;
+  background-color: #f9f9f9;
+  text-align: center;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.provider p {
+  margin-bottom: 20px;
+}
+
+.button {
+  display: inline-block;
+  background-color: #6c757d; /* Example secondary color */
+  color: white;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 5px;
+  margin-top: 15px;
+}
+
+.button:hover {
+  background-color: #5a6268;
+}

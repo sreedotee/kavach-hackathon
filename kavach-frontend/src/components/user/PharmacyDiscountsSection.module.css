@@ -1,0 +1,19 @@
+.pharmacy {
+  padding: 20px 0;
+  background-color: white;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.pharmacy ul {
+  list-style: disc;
+  padding-left: 20px;
+}
+
+.pharmacy ul li {
+  margin-bottom: 5px;
+}
