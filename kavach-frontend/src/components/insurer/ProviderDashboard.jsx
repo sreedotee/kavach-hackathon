@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 
-// Simulated base costs for each plan
-const planBaseCosts = {
-    Silver: 50,
-    Gold: 100,
-    Platinum: 150,
+// Plan details with fixed platform fees and bid margins
+const planDetails = {
+    Silver: { price: 3, fee: 0.50, minBid: 0.50, maxBid: 0.80 },
+    Gold: { price: 10, fee: 1.50, minBid: 0.30, maxBid: 0.60 },
+    Platinum: { price: 25, fee: 2.00, minBid: 0.20, maxBid: 0.50 },
 };
 
-// Base margin adjustments based on plan risk/value
-const planBaseMarginAdjustments = {
-    Silver: -0.03,
-    Gold: -0.01,
-    Platinum: 0.05,
-};
+// Calculate Kavach revenue after insurer cut
+function calculateKavachRevenue(bid) {
+    const { price, fee } = planDetails[bid.plan];
+    const remainingAmount = price - fee;
+    const insurerCut = remainingAmount * bid.margin;
+    const kavachRevenue = remainingAmount - insurerCut;
+    return kavachRevenue * bid.userCapacity;
+}
 
 function ProviderDashboard() {
     const [plan, setPlan] = useState('Silver');
@@ -20,22 +22,13 @@ function ProviderDashboard() {
     const [dataMonitoring, setDataMonitoring] = useState(false);
     const [userCapacity, setUserCapacity] = useState('');
     const [submittedBids, setSubmittedBids] = useState([
-        { insurerId: 'Insurer Alpha', plan: 'Silver', margin: 0.10, dataMonitoring: true, userCapacity: 1000 },
-        { insurerId: 'Insurer Beta', plan: 'Gold', margin: 0.15, dataMonitoring: false, userCapacity: 500 },
+        { insurerId: 'Insurer Alpha', plan: 'Silver', margin: 0.40, dataMonitoring: true, userCapacity: 1000 },
+        { insurerId: 'Insurer Beta', plan: 'Gold', margin: 0.30, dataMonitoring: false, userCapacity: 500 },
         { insurerId: 'Insurer Gamma', plan: 'Platinum', margin: 0.20, dataMonitoring: true, userCapacity: 200 },
     ]);
     const [allotmentOrder, setAllotmentOrder] = useState([]);
 
-    // Calculate bid score
-    const calculateBidScore = (bid) => {
-        const baseCost = planBaseCosts[bid.plan] || 0;
-        const baseMarginAdjustment = planBaseMarginAdjustments[bid.plan] || 0;
-        const effectiveMargin = bid.margin + baseMarginAdjustment;
-        const absoluteMargin = baseCost * effectiveMargin;
-        return absoluteMargin * bid.userCapacity;
-    };
-
-    // Handle bid submission
+    // Handle bid submission with validation
     const handleBidSubmit = (event) => {
         event.preventDefault();
         const newBid = {
@@ -45,16 +38,25 @@ function ProviderDashboard() {
             dataMonitoring: dataMonitoring,
             userCapacity: parseInt(userCapacity, 10),
         };
+
+        // Validate margin within allowed range
+        const { minBid, maxBid } = planDetails[plan];
+        if (newBid.margin < minBid || newBid.margin > maxBid) {
+            alert(`Margin for ${plan} should be between ${(minBid * 100).toFixed(0)}% and ${(maxBid * 100).toFixed(0)}%`);
+            return;
+        }
+
         setSubmittedBids([...submittedBids, newBid]);
 
+        // Sort bids based on calculated revenue
         const sortedBids = [...submittedBids, newBid].sort((a, b) => {
-            const scoreA = calculateBidScore(a);
-            const scoreB = calculateBidScore(b);
-            return scoreB - scoreA;
+            const revenueA = calculateKavachRevenue(a);
+            const revenueB = calculateKavachRevenue(b);
+            return revenueB - revenueA;
         });
         setAllotmentOrder(sortedBids);
 
-        // Reset the form fields
+        // Reset form fields
         setPlan('Silver');
         setMargin('');
         setDataMonitoring(false);
@@ -73,7 +75,7 @@ function ProviderDashboard() {
                         <p className="text-gray-700">
                             <span className="font-semibold">Insurer:</span> {bid.insurerId},
                             <span className="font-semibold"> Plan:</span> {bid.plan},
-                            <span className="font-semibold"> Margin:</span> {((bid.margin + (planBaseMarginAdjustments[bid.plan] || 0)) * 100).toFixed(2)}% (Adjusted),
+                            <span className="font-semibold"> Margin:</span> {(bid.margin * 100).toFixed(2)}%,
                             <span className="font-semibold"> Data Monitoring:</span> {bid.dataMonitoring ? 'Yes' : 'No'},
                             <span className="font-semibold"> Capacity:</span> {bid.userCapacity}
                         </p>
@@ -152,8 +154,7 @@ function ProviderDashboard() {
                     <div key={index} className="bg-gray-100 p-4 rounded-lg shadow-sm">
                         <p className="text-gray-700">
                             <span className="font-semibold">Rank {index + 1}:</span> 
-                            Insurer: {bid.insurerId}, Plan: {bid.plan},
-                            Margin: {((bid.margin + (planBaseMarginAdjustments[bid.plan] || 0)) * 100).toFixed(2)}% (Adjusted),
+                            Insurer: {bid.insurerId}, Plan: {bid.plan}, Margin: {(bid.margin * 100).toFixed(2)}%,
                             Capacity: {bid.userCapacity}
                         </p>
                     </div>
